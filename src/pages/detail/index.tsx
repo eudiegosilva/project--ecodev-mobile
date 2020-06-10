@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Feather as Icon, FontAwesome } from "@expo/vector-icons";
 import {
   StyleSheet,
@@ -13,6 +13,10 @@ import { RectButton } from "react-native-gesture-handler";
 
 const Detail: React.FC = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+
+  console.log(route.params);
+
   function handleNavigateBack() {
     navigation.goBack();
   }
