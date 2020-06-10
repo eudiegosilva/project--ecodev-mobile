@@ -10,6 +10,7 @@ const Home: React.FC = () => {
   function handleNavigateToPoints() {
     navigation.navigate("Points");
   }
+
   return (
     <ImageBackground
       source={require("../../assets/home-background.png")}
