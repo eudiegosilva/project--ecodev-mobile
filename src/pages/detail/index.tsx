@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Feather as Icon, FontAwesome } from "@expo/vector-icons";
 import {
@@ -10,16 +10,47 @@ import {
   SafeAreaView,
 } from "react-native";
 import { RectButton } from "react-native-gesture-handler";
+import api from "../../services/api";
+
+interface RouteParams {
+  point_id: number;
+}
+
+interface Data {
+  point: {
+    image: string;
+    name: string;
+    email: string;
+    whatsapp: string;
+    city: string;
+    uf: string;
+  };
+  items: {
+    title: string;
+  }[];
+}
 
 const Detail: React.FC = () => {
+  const [data, setData] = useState<Data>({} as Data);
   const navigation = useNavigation();
   const route = useRoute();
 
-  console.log(route.params);
+  const routeParams = route.params as RouteParams;
+
+  useEffect(() => {
+    api
+      .get(`/points/${routeParams.point_id}`)
+      .then((response) => setData(response.data));
+  }, []);
 
   function handleNavigateBack() {
     navigation.goBack();
   }
+
+  if (!data.point) return null;
+
+  const { point, items } = data;
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -29,14 +60,17 @@ const Detail: React.FC = () => {
         <Image
           style={styles.pointImage}
           source={{
-            uri:
-              "https://images.unsplash.com/photo-1545601445-4d6a0a0565f0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
+            uri: point.image,
           }}
         />
-        <Text style={styles.pointName}>Mercadinho</Text>
-        <Text style={styles.pointItems}>Objetos, objetos e objetos</Text>
+        <Text style={styles.pointName}>{point.name}</Text>
+        <Text style={styles.pointItems}>
+          {items.map((item) => item.title).join(" | ")}
+        </Text>
         <View style={styles.address}>
-          <Text style={styles.addressTitle}>Lorem</Text>
+          <Text
+            style={styles.addressTitle}
+          >{`${point.city}, ${point.uf}`}</Text>
           <Text style={styles.addressContent}>
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quae, eum.
           </Text>
